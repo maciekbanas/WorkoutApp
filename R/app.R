@@ -3,10 +3,10 @@ library(shinyMobile)
 
 workout_app <- function(){
   ui <- shinyMobile::f7Page(
-    title = "Calisthenics App",
+    title = "Workout App",
     shinyMobile::f7SingleLayout(
       navbar = shinyMobile::f7Navbar(
-        title = "Measure your progress"
+        title = "Workout App"
       ),
       workout_ui(
         id = "workout"

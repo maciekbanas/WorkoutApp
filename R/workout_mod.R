@@ -1,8 +1,10 @@
 workout_ui <- function(id) {
   shinyMobile::f7Card(
-    shiny::actionButton(
-      shiny::NS(id, "add_workout_btn"),
-      "Add your workout"
+    shinyWidgets::actionBttn(
+      inputId = shiny::NS(id, "add_workout_btn"),
+      label = "Add your workout",
+      color = "royal",
+      size = "lg"
     )
   )
 }
@@ -15,10 +17,20 @@ workout_server <- function(id) {
         shinyalert::shinyalert(
             html = TRUE,
             text = tagList(
-              shiny::selectInput(
+              shinyWidgets::pickerInput(
                 inputId = "workout_type",
                 label = "Choose your workout",
                 choices = app_config[["workout_types"]]
+              ),
+              shiny::numericInput(
+                inputId = "additional_weight",
+                label = "Additional weight?",
+                value = 0
+              ),
+              shinyWidgets::pickerInput(
+                inputId = "resistance_band",
+                label = "Using resistance band",
+                choices = c("no", "light", "medium", "hard")
               )
             )
           )

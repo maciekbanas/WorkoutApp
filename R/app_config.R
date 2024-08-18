@@ -1,1 +1,1 @@
-app_config <- yaml::read_yaml("../config.yaml")
+app_config <- yaml::read_yaml("config.yaml")

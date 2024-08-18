@@ -1,6 +1,7 @@
 library(shiny)
 library(shinyMobile)
 
+source("app_config.R")
 source("workout_mod.R")
 
 ui <- shinyMobile::f7Page(

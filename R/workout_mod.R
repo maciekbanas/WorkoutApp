@@ -12,10 +12,15 @@ workout_server <- function(id) {
     id = id,
     module = function(input, output, session) {
       shiny::observeEvent(input$add_workout_btn, {
-          shinyalert::shinyalert(
-            title = "What is your workout?",
-            text = "Choose type of your workout",
-            type = "input"
+        shinyalert::shinyalert(
+            html = TRUE,
+            text = tagList(
+              shiny::selectInput(
+                inputId = "workout_type",
+                label = "Choose your workout",
+                choices = app_config[["workout_types"]]
+              )
+            )
           )
         }
       )

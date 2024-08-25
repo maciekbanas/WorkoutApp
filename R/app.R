@@ -1,7 +1,7 @@
 library(shiny)
 library(shinyMobile)
 
-workout_app <- function(){
+workout_app <- function() {
   ui <- shinyMobile::f7Page(
     title = "Workout App",
     shinyMobile::f7SingleLayout(
@@ -13,12 +13,12 @@ workout_app <- function(){
       )
     )
   )
-  
-  server <- function(input, output, session) {
+
+server <- function(input, output, session) {
     workout_server(
       id = "workout"
     )
-  }
-  
-  shiny::shinyApp(ui, server)
+}
+
+shiny::shinyApp(ui, server)
 }

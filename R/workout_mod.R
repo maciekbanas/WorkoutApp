@@ -40,7 +40,7 @@ workout_server <- function(id) {
           title = paste("Series", series_number()),
           html = TRUE,
           text = shiny::numericInput(
-            inputId = ns("repos_no"),
+            inputId = ns("reps_no"),
             label = "Number of reps",
             value = 0
           ),
@@ -49,11 +49,11 @@ workout_server <- function(id) {
           confirmButtonText = "Next series",
           callbackR = function(x) {
             if (x) {
-              add_series(input$repos_no)
+              add_series(input$reps_no)
               series_number(series_number() + 1)
               show_series_window()
             } else {
-              add_series(input$repos_no)
+              add_series(input$reps_no)
               finish_and_save_workout()
             }
           }

@@ -6,7 +6,8 @@ workout_ui <- function(id) {
       label = "Add your workout",
       color = "royal",
       size = "lg"
-    )
+    ),
+    shiny::uiOutput(ns("workout_output"))
   )
 }
 
@@ -22,42 +23,42 @@ workout_server <- function(id) {
       )
 
       add_series <- function(reps_no) {
-        workout_data$reps <- c(workout_data$reps, reps_no)
+        workout_data[["reps"]] <- c(workout_data$reps, reps_no)
       }
 
       finish_and_save_workout <- function() {
-        workout_data$type <- input$workout_type
+        workout_data[["type"]] <- input$workout_type
+        output$workout_output <- shiny::renderText({
+          paste0(workout_data[["type"]],
+                 ": ",
+                 paste0(workout_data[["reps"]], collapse = ", "))
+        })
       }
 
       show_series_window <- function() {
         shinyalert::shinyalert(
           title = paste("Series", series_number()),
           html = TRUE,
-          text = shiny::tagList(
-            shiny::numericInput(
-              inputId = ns("repos_no"),
-              label = "Number of reps",
-              value = 0
-            ),
-            shiny::actionButton(
-              inputId = ns("next_series"),
-              label = "Next series"
-            )
+          text = shiny::numericInput(
+            inputId = ns("repos_no"),
+            label = "Number of reps",
+            value = 0
           ),
+          showCancelButton = TRUE,
+          cancelButtonText = "Finish",
+          confirmButtonText = "Next series",
           callbackR = function(x) {
             if (x) {
+              add_series(input$repos_no)
+              series_number(series_number() + 1)
+              show_series_window()
+            } else {
               add_series(input$repos_no)
               finish_and_save_workout()
             }
           }
         )
       }
-
-      shiny::observeEvent(input$next_series, {
-        add_series(input$repos_no)
-        series_number(series_number() + 1)
-        show_series_window()
-      })
 
       shiny::observeEvent(input$add_workout_btn, {
         shinyalert::shinyalert(

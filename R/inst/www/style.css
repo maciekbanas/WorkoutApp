@@ -1,0 +1,9 @@
+.swal-button--cancel {
+    float: right;
+    width: 40%;
+  }
+
+.swal-button--confirm {
+    float: left;
+    width: 40%;
+  }

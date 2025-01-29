@@ -8,7 +8,7 @@ workout_ui <- function(id) {
       inputId = ns("workout_type"),
       label = "Choose your workout",
       choices = c("Push ups", "Dips",
-                  "Pull ups", "Muscle ups",
+                  "Pull ups", "High pull ups", "Muscle ups",
                   "Squats", "Burpees")  # Example choices
     ),
     shinyMobile::f7Slider(

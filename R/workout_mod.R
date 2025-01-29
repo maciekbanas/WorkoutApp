@@ -21,13 +21,16 @@ workout_ui <- function(id) {
       label = "Using resistance band",
       choices = c("no", "light", "medium", "hard")
     ),
+    shiny::br(),
     shinyMobile::f7Button(
       inputId = ns("start_workout_btn"),
       label = "Start Workout",
       color = "green",
       size = "large"
     ),
+    shiny::br(),
     shiny::uiOutput(ns("series_ui")),
+    shiny::br(),
     # Output for displaying workout summary
     shiny::uiOutput(ns("workout_output"))
   )
@@ -78,6 +81,7 @@ workout_server <- function(id) {
               max = 100,
               value = 10
             ),
+            shiny::br(),
             shinyMobile::f7Button(
               inputId = ns("next_series_btn"),
               label = "Next Series",

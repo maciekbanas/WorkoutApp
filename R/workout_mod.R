@@ -1,94 +1,121 @@
+# UI Function
 workout_ui <- function(id) {
   ns <- shiny::NS(id)
+  
+  # Main UI
   shinyMobile::f7Card(
-    shinyWidgets::actionBttn(
-      inputId = ns("add_workout_btn"),
-      label = "Add your workout",
-      color = "royal",
-      size = "lg"
+    shinyMobile::f7Picker(
+      inputId = ns("workout_type"),
+      label = "Choose your workout",
+      choices = c("Pushups", "Squats", "Burpees")  # Example choices
     ),
+    shinyMobile::f7Slider(
+      inputId = ns("additional_weight"),
+      label = "Additional weight?",
+      min = 0,
+      max = 100,
+      value = 0
+    ),
+    shinyMobile::f7Picker(
+      inputId = ns("resistance_band"),
+      label = "Using resistance band",
+      choices = c("no", "light", "medium", "hard")
+    ),
+    shinyMobile::f7Button(
+      inputId = ns("start_workout_btn"),
+      label = "Start Workout",
+      color = "green",
+      size = "large"
+    ),
+    shiny::uiOutput(ns("series_ui")),
+    # Output for displaying workout summary
     shiny::uiOutput(ns("workout_output"))
   )
 }
 
+# Server Function
 workout_server <- function(id) {
   ns <- shiny::NS(id)
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      series_number <- shiny::reactiveVal(0)
+
+      # Reactive values to manage workout data and state
       workout_data <- shiny::reactiveValues(
         type = "",
         reps = c()
       )
+      
+      # Visibility states for conditional panels
+      show_settings <- shiny::reactiveVal(FALSE)
+      show_series <- shiny::reactiveVal(FALSE)
 
-      add_series <- function(reps_no) {
-        workout_data[["reps"]] <- c(workout_data$reps, reps_no)
-      }
+      # Update output bindings to manage panel visibility
+      output$show_settings <- shiny::renderText({
+        if (show_settings()) "show_settings" else "hide"
+      })
+      
+      output$show_series <- shiny::renderText({
+        if (show_series()) "show_series" else "hide"
+      })
 
-      finish_and_save_workout <- function() {
-        workout_data[["type"]] <- input$workout_type
-        output$workout_output <- shiny::renderText({
-          paste0(workout_data[["type"]],
-                 ": ",
-                 paste0(workout_data[["reps"]], collapse = ", "))
-        })
-      }
-
-      show_series_window <- function() {
-        shinyalert::shinyalert(
-          title = paste("Series", series_number()),
-          html = TRUE,
-          text = shiny::numericInput(
-            inputId = ns("reps_no"),
-            label = "Number of reps",
-            value = 0
-          ),
-          showCancelButton = TRUE,
-          cancelButtonText = "Finish",
-          confirmButtonText = "Next series",
-          callbackR = function(x) {
-            if (x) {
-              add_series(input$reps_no)
-              series_number(series_number() + 1)
-              show_series_window()
-            } else {
-              add_series(input$reps_no)
-              finish_and_save_workout()
-            }
-          }
-        )
-      }
-
+      # Add workout button click event
       shiny::observeEvent(input$add_workout_btn, {
-        shinyalert::shinyalert(
-            html = TRUE,
-            text = shiny::tagList(
-              shinyWidgets::pickerInput(
-                inputId = ns("workout_type"),
-                label = "Choose your workout",
-                choices = app_config[["workout_types"]]
-              ),
-              shiny::numericInput(
-                inputId = "additional_weight",
-                label = "Additional weight?",
-                value = 0
-              ),
-              shinyWidgets::pickerInput(
-                inputId = "resistance_band",
-                label = "Using resistance band",
-                choices = c("no", "light", "medium", "hard")
-              )
+        show_settings(TRUE)
+        show_series(FALSE)
+        updateNumericInput(session, ns("reps_input"), value = 10)
+      }, ignoreInit = TRUE)
+      
+      # Start workout button click event
+      shiny::observeEvent(input$start_workout_btn, {
+        output$series_ui <- shiny::renderUI({
+          shiny::tagList(
+            shiny::h3("Series Input"),
+            shinyMobile::f7Slider(
+              inputId = ns("reps_input"),
+              label = "Number of reps",
+              min = 0,
+              max = 100,
+              value = 10
             ),
-            callbackR = function(x) {
-              if (x) {
-                series_number(series_number() + 1)
-                show_series_window()
-              }
-            }
+            shinyMobile::f7Button(
+              inputId = ns("next_series_btn"),
+              label = "Next Series",
+              color = "green",
+              size = "large"
+            ),
+            shinyMobile::f7Button(
+              inputId = ns("finish_workout_btn"),
+              label = "Finish Workout",
+              color = "red",
+              size = "large"
+            )
           )
-        }
-      )
+        })
+        workout_data$type <- input$workout_type
+        workout_data$reps <- c()  # Reset reps
+        show_settings(FALSE)
+        show_series(TRUE)
+      }, ignoreInit = TRUE)
+      
+      # Next series button click event
+      shiny::observeEvent(input$next_series_btn, {
+        workout_data$reps <- c(workout_data$reps, input$reps_input)
+        updateNumericInput(session, ns("reps_input"), value = 10)  # Reset for next input
+      }, ignoreInit = TRUE)
+      
+      # Finish workout button click event
+      shiny::observeEvent(input$finish_workout_btn, {
+        workout_data$reps <- c(workout_data$reps, input$reps_input)  # Add last series
+        show_series(FALSE)
+        
+        # Display workout summary
+        output$workout_output <- shiny::renderUI({
+          shiny::p(
+            paste0(workout_data$type, ": ", paste0(workout_data$reps, collapse = ", "))
+          )
+        })
+      }, ignoreInit = TRUE)
     }
   )
 }

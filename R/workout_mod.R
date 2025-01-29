@@ -76,7 +76,7 @@ workout_server <- function(id) {
             shiny::h3("Series Input"),
             shinyMobile::f7Slider(
               inputId = ns("reps_input"),
-              label = "Number of reps",
+              label = "How many reps did you do?",
               min = 0,
               max = 100,
               value = 10

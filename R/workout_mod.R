@@ -3,39 +3,52 @@ workout_ui <- function(id) {
   ns <- shiny::NS(id)
   
   # Main UI
-  shinyMobile::f7Card(
-    shinyMobile::f7Picker(
-      inputId = ns("workout_type"),
-      label = "Choose your workout",
-      choices = c("Push ups", "Dips",
-                  "Pull ups", "High pull ups", "Muscle ups",
-                  "Squats", "Burpees")  # Example choices
+  shinyMobile::f7Tab(
+    tabName = "Workout",
+    shinyMobile::f7Card(
+      shinyMobile::f7Picker(
+        inputId = ns("workout_type"),
+        label = "Choose your workout",
+        choices = c("Push ups", "Pike push ups", "Advanced pike push ups",
+                    "Dips",
+                    "Pull ups", "High pull ups", "Muscle ups",
+                    "Squats", "Burpees")  # Example choices
+      ),
+      shinyMobile::f7Slider(
+        inputId = ns("additional_weight"),
+        label = "Additional weight?",
+        min = 0,
+        max = 100,
+        value = 0
+      ),
+      shinyMobile::f7Picker(
+        inputId = ns("resistance_band"),
+        label = "Using resistance band",
+        choices = c("no", "light", "medium", "hard")
+      ),
+      shiny::br(),
+      shinyMobile::f7Slider(
+        inputId = ns("timer"),
+        label = "Set timer between series (seconds)",
+        min = 0,
+        max = 360,
+        value = 60
+      ),
+      shiny::br(),
+      shinyMobile::f7Button(
+        inputId = ns("start_workout_btn"),
+        label = "Start Workout",
+        color = "green",
+        size = "large"
+      )
     ),
-    shinyMobile::f7Slider(
-      inputId = ns("additional_weight"),
-      label = "Additional weight?",
-      min = 0,
-      max = 100,
-      value = 0
-    ),
-    shinyMobile::f7Picker(
-      inputId = ns("resistance_band"),
-      label = "Using resistance band",
-      choices = c("no", "light", "medium", "hard")
-    ),
-    shiny::br(),
-    shinyMobile::f7Button(
-      inputId = ns("start_workout_btn"),
-      label = "Start Workout",
-      color = "green",
-      size = "large"
-    ),
-    shiny::br(),
     shiny::uiOutput(ns("series_ui")),
-    shiny::br(),
-    # Output for displaying workout summary
-    shiny::uiOutput(ns("workout_output"))
+    shinyMobile::f7Card(
+      # Output for displaying workout summary
+      shiny::uiOutput(ns("workout_output"))
+    )
   )
+  
 }
 
 # Server Function
@@ -68,14 +81,19 @@ workout_server <- function(id) {
       shiny::observeEvent(input$add_workout_btn, {
         show_settings(TRUE)
         show_series(FALSE)
-        updateNumericInput(session, ns("reps_input"), value = 10)
+        shiny::updateNumericInput(session, ns("reps_input"), value = 10)
       }, ignoreInit = TRUE)
       
       # Start workout button click event
       shiny::observeEvent(input$start_workout_btn, {
-        output$series_ui <- shiny::renderUI({
-          shiny::tagList(
+        shiny::insertUI(
+          selector = "#workout-series_ui",
+          ui = shinyMobile::f7Card(
             shiny::h3("Series Input"),
+            shinyMobile::f7BlockTitle("Time Left:"),
+            shinyMobile::f7Block(
+              shinyMobile::f7Badge(id = ns("countdown"))
+            ),            
             shinyMobile::f7Slider(
               inputId = ns("reps_input"),
               label = "How many reps did you do?",
@@ -92,24 +110,24 @@ workout_server <- function(id) {
             ),
             shinyMobile::f7Button(
               inputId = ns("finish_workout_btn"),
-              label = "Finish Workout",
+              label = "Save and finish Workout",
               color = "red",
               size = "large"
             )
           )
-        })
+        )
         workout_data$type <- input$workout_type
         workout_data$reps <- c()  # Reset reps
         show_settings(FALSE)
         show_series(TRUE)
       }, ignoreInit = TRUE)
       
-      # Next series button click event
       shiny::observeEvent(input$next_series_btn, {
         workout_data$reps <- c(workout_data$reps, input$reps_input)
-        updateNumericInput(session, ns("reps_input"), value = 10)  # Reset for next input
+        shiny::updateNumericInput(session, ns("reps_input"), value = 10)
+        session$sendCustomMessage("startCountdown", input$timer)
       }, ignoreInit = TRUE)
-      
+
       # Finish workout button click event
       shiny::observeEvent(input$finish_workout_btn, {
         workout_data$reps <- c(workout_data$reps, input$reps_input)  # Add last series

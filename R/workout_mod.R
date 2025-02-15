@@ -28,7 +28,7 @@ workout_ui <- function(id) {
       ),
       shiny::br(),
       shinyMobile::f7Slider(
-        inputId = ns("timer"),
+        inputId = ns("timer_setter"),
         label = "Set timer between series (seconds)",
         min = 0,
         max = 360,
@@ -92,7 +92,12 @@ workout_server <- function(id) {
             shiny::h3("Series Input"),
             shinyMobile::f7BlockTitle("Time Left:"),
             shinyMobile::f7Block(
-              shinyMobile::f7Badge(id = ns("countdown"))
+              shinyMobile::f7Badge(
+                shinyTimer::shinyTimer(
+                  inputId = ns("timer"),
+                  start = input$timer_setter
+                )
+              )
             ),            
             shinyMobile::f7Slider(
               inputId = ns("reps_input"),
@@ -125,7 +130,10 @@ workout_server <- function(id) {
       shiny::observeEvent(input$next_series_btn, {
         workout_data$reps <- c(workout_data$reps, input$reps_input)
         shiny::updateNumericInput(session, ns("reps_input"), value = 10)
-        session$sendCustomMessage("startCountdown", input$timer)
+        shinyTimer::countDown(
+          session = session,
+          inputId = ns("timer")
+        )
       }, ignoreInit = TRUE)
 
       # Finish workout button click event

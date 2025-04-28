@@ -29,7 +29,7 @@ workout_configure_tab <-
         label = "Set timer between series (seconds)",
         min = 0,
         max = 360,
-        value = 60
+        value = 60L
       ),
       shiny::br(),
       shinyMobile::f7Button(

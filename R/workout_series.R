@@ -5,10 +5,13 @@ workout_series_tab <- shinyMobile::f7Tab(
         shiny::h3("Series Input"),
         shinyMobile::f7BlockTitle("Time Left:"),
         shinyMobile::f7Block(
-          shinyMobile::f7Badge(
+          htmltools::div(
+            style = "display:flex; justify-content:center;",
             shinyTimer::shinyTimer(
               inputId = "timer",
-              startSeconds = 0L
+              seconds = 10L,
+              background = "circle",
+              style = "font-size:46px; background-color:purple;"
             )
           )
         ),

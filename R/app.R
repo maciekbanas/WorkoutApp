@@ -59,7 +59,34 @@ workout_app <- function() {
         shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
 
       }, ignoreInit = TRUE)
-    
+      
+      shiny::observeEvent(input$timer_done, {
+        shiny::insertUI(
+          selector = "#series_widgets",
+          ui = shinyMobile::f7Block(
+            shinyMobile::f7Slider(
+              inputId = "reps_input",
+              label = "How many reps did you do?",
+              min = 0,
+              max = 100,
+              value = 10
+            ),
+            shiny::br(),
+            shinyMobile::f7Button(
+              inputId = "next_series_btn",
+              label = "Next Series",
+              color = "green",
+              size = "large"
+            ),
+            shinyMobile::f7Button(
+              inputId = "finish_workout_btn",
+              label = "Save and finish Workout",
+              color = "red",
+              size = "large"
+            )
+          )
+        )
+      })
 }
 
 shiny::shinyApp(ui, server)

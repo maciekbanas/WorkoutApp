@@ -15,25 +15,6 @@ workout_series_tab <- shinyMobile::f7Tab(
             )
           )
         ),
-        shinyMobile::f7Slider(
-          inputId = "reps_input",
-          label = "How many reps did you do?",
-          min = 0,
-          max = 100,
-          value = 10
-        ),
-        shiny::br(),
-        shinyMobile::f7Button(
-          inputId = "next_series_btn",
-          label = "Next Series",
-          color = "green",
-          size = "large"
-        ),
-        shinyMobile::f7Button(
-          inputId = "finish_workout_btn",
-          label = "Save and finish Workout",
-          color = "red",
-          size = "large"
-        )
+        shiny::uiOutput("series_widgets")
       )
 )

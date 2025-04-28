@@ -2,6 +2,7 @@ workout_configure_tab <-
   shinyMobile::f7Tab(
     tabName = "WorkoutConfigure",
     icon = shinyMobile::f7Icon("slider_horizontal_3"),
+    active = TRUE,
     shinyMobile::f7Card(
       shinyMobile::f7Picker(
         inputId = "workout_type",

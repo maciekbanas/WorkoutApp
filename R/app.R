@@ -4,7 +4,7 @@ library(shinyMobile)
 workout_app <- function() {
   ui <- shinyMobile::f7Page(
   title = "Workout App",
-  shinyMobile::f7SingleLayout(
+  shinyMobile::f7TabLayout(
     navbar = shinyMobile::f7Navbar(
       title = "Workout App"
     ),

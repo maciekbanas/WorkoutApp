@@ -1,0 +1,8 @@
+#shiny-timer-container {
+  display:flex; 
+  justify-content:center;
+}
+
+.hidden {
+  visibility: hidden;
+}

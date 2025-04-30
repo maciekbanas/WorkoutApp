@@ -69,6 +69,7 @@ workout_app <- function() {
   
   shiny::observeEvent(input$timer_done, {
     if (input$timer_done) {
+      session$sendCustomMessage("hideTimer", TRUE)
       insert_series_widgets()
     } else {
       shiny::removeUI(

@@ -15,7 +15,7 @@ workout_series_tab <- shinyMobile::f7Tab(
             )
           )
         ),
-        br(),
+        shiny::br(),
         shinyMobile::f7Button(
           "warmup_done",
           "Done"

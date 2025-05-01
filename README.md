@@ -16,3 +16,8 @@ and gather data about them in time.
 Basic idea is to leave workout routine as flexible to user as possible,
 i.e. user may measure his workout (number series and reps) for a given
 time, without any specific training program being imposed.
+
+# Deployment
+
+Check deployed app (dev version) on
+<https://maciekbanas.shinyapps.io/WorkoutApp/>

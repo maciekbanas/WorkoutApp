@@ -1,1 +1,0 @@
-app_config <- yaml::read_yaml("config.yaml")

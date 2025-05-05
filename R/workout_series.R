@@ -2,7 +2,9 @@ workout_series_tab <- shinyMobile::f7Tab(
     tabName = "WorkoutSeries",
     icon = shinyMobile::f7Icon("flame_fill"),
     shinyMobile::f7Card(
-        shiny::h3("Warm up"),
+        shiny::div(id = "series-header"),
+        shiny::div(id = "series-data"),
+        shiny::div(id = "series-no"),
         shinyMobile::f7Block(
           htmltools::div(
             id = "shiny-timer-container",

@@ -9,3 +9,15 @@ Shiny.addCustomMessageHandler("showTimer", function(x) {
 Shiny.addCustomMessageHandler("hideTimer", function(x) {
   $("#shiny-timer-container").addClass("hidden");
 })
+
+Shiny.addCustomMessageHandler("updateHeader", function(x) {
+  $("#series-header").text(x);
+})
+
+Shiny.addCustomMessageHandler("updateSeriesNumber", function(x) {
+  $("#series-no").text("Series " + x);
+})
+
+Shiny.addCustomMessageHandler("updateSeriesData", function(x) {
+  $("#series-data").text("Additional weight: " + x + " kg");
+})

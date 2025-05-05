@@ -14,5 +14,6 @@ Collate:
   workout_configure.R
   workout_series.R
   workout_results.R
+  workout_server.R
   workout_app.R
   

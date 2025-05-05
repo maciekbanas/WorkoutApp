@@ -1,6 +1,7 @@
 workout_server <- function(input, output, session) {
   workout_data <- shiny::reactiveValues(
     type = "",
+    series_no = 1,
     reps = c()
   )
   
@@ -8,17 +9,20 @@ workout_server <- function(input, output, session) {
     workout_data$type <- input$workout_type
     workout_data$reps <- c()
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutSeries")
+    session$sendCustomMessage("updateHeader", "Warm up!")
   }, ignoreInit = TRUE)
   
   shiny::observeEvent(input$next_series_btn, {
     workout_data$reps <- c(workout_data$reps, input$reps_input)
-    shiny::updateNumericInput(session, "reps_input", value = 10)
+    shiny::updateNumericInput(session, "reps_input", value = 10L)
     shinyTimer::updateShinyTimer(
       inputId = "timer",
       seconds = input$timer_setter
     )
+    workout_data$series_no <- workout_data$series_no + 1L
     session$sendCustomMessage("resetTimerDone", FALSE)
     session$sendCustomMessage("showTimer", TRUE)
+    session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
     shinyTimer::countDown(
       inputId = "timer"
     )
@@ -40,6 +44,9 @@ workout_server <- function(input, output, session) {
     shiny::removeUI(
       selector = "#warmup_done"
     )
+    session$sendCustomMessage("updateHeader", workout_data$type)
+    session$sendCustomMessage("updateSeriesNumber", 1L)
+    session$sendCustomMessage("updateSeriesData", input$additional_weight)
     insert_series_widgets()
   })
   

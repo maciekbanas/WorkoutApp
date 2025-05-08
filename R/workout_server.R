@@ -31,13 +31,26 @@ workout_server <- function(input, output, session) {
   shiny::observeEvent(input$finish_workout_btn, {
     workout_data$reps <- c(workout_data$reps, input$reps_input)
     
+    reps_str <- paste(workout_data$reps, collapse = ",")
+    dbExecute(db_con, "
+      INSERT INTO workouts (workout_type, reps, weight, band, session_date)
+      VALUES (?, ?, ?, ?, ?)
+    ",
+      params = list(
+        workout_data$type,
+        reps_str,
+        input$additional_weight,
+        input$resistance_band,
+        as.character(Sys.time())
+      )
+    )
+    
     output$workout_results <- shiny::renderUI({
       shiny::p(
         paste0(workout_data$type, ": ", paste0(workout_data$reps, collapse = ", "))
       )
     })
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
-    
   }, ignoreInit = TRUE)
   
   shiny::observeEvent(input$warmup_done, {

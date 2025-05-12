@@ -32,19 +32,25 @@ workout_server <- function(input, output, session) {
     workout_data$reps <- c(workout_data$reps, input$reps_input)
     
     reps_str <- paste(workout_data$reps, collapse = ",")
-    dbExecute(db_con, "
-      INSERT INTO workouts (workout_type, reps, weight, band, session_date)
-      VALUES (?, ?, ?, ?, ?)
-    ",
-      params = list(
-        workout_data$type,
-        reps_str,
-        input$additional_weight,
-        input$resistance_band,
-        as.character(Sys.time())
+    res <- httr::POST(
+      url = Sys.getenv("SUPABASE_PROJECT_URL"),
+      add_headers(
+        Authorization = paste0("Bearer ", Sys.getenv("SUPABASE_API_KEY")),
+        apikey = Sys.getenv("SUPABASE_ROLE_KEY"),
+        `Content-Type` = "application/json"
+      ),
+      body = jsonlite::toJSON(
+        list(
+          workout_type = workout_data$type,
+          reps = reps_str,
+          weight = input$additional_weight,
+          band = input$resistance_band,
+          session_date = Sys.time()
+        ),
+        auto_unbox = TRUE
       )
     )
-    
+
     output$workout_results <- shiny::renderUI({
       shiny::p(
         paste0(workout_data$type, ": ", paste0(workout_data$reps, collapse = ", "))

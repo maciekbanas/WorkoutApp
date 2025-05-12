@@ -11,7 +11,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
 Collate:
-  db_connect.R
+  app_utils.R
   workout_configure.R
   workout_series.R
   workout_results.R

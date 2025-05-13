@@ -33,7 +33,7 @@ workout_server <- function(input, output, session) {
     
     reps_str <- paste(workout_data$reps, collapse = ",")
     res <- httr::POST(
-      url = Sys.getenv("SUPABASE_PROJECT_URL"),
+      url = supabase_project_url,
       add_headers(
         Authorization = paste0("Bearer ", Sys.getenv("SUPABASE_API_KEY")),
         apikey = Sys.getenv("SUPABASE_ROLE_KEY"),

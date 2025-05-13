@@ -31,13 +31,32 @@ workout_server <- function(input, output, session) {
   shiny::observeEvent(input$finish_workout_btn, {
     workout_data$reps <- c(workout_data$reps, input$reps_input)
     
+    reps_str <- paste(workout_data$reps, collapse = ",")
+    res <- httr::POST(
+      url = supabase_project_url,
+      add_headers(
+        Authorization = paste0("Bearer ", Sys.getenv("SUPABASE_API_KEY")),
+        apikey = Sys.getenv("SUPABASE_ROLE_KEY"),
+        `Content-Type` = "application/json"
+      ),
+      body = jsonlite::toJSON(
+        list(
+          workout_type = workout_data$type,
+          reps = reps_str,
+          weight = input$additional_weight,
+          band = input$resistance_band,
+          session_date = Sys.time()
+        ),
+        auto_unbox = TRUE
+      )
+    )
+
     output$workout_results <- shiny::renderUI({
       shiny::p(
         paste0(workout_data$type, ": ", paste0(workout_data$reps, collapse = ", "))
       )
     })
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
-    
   }, ignoreInit = TRUE)
   
   shiny::observeEvent(input$warmup_done, {

@@ -34,7 +34,7 @@ workout_server <- function(input, output, session) {
     reps_str <- paste(workout_data$reps, collapse = ",")
     res <- httr::POST(
       url = supabase_project_url,
-      add_headers(
+      httr::add_headers(
         Authorization = paste0("Bearer ", Sys.getenv("SUPABASE_API_KEY")),
         apikey = Sys.getenv("SUPABASE_ROLE_KEY"),
         `Content-Type` = "application/json"
@@ -50,14 +50,10 @@ workout_server <- function(input, output, session) {
         auto_unbox = TRUE
       )
     )
-
-    output$workout_results <- shiny::renderUI({
-      shiny::p(
-        paste0(workout_data$type, ": ", paste0(workout_data$reps, collapse = ", "))
-      )
-    })
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
   }, ignoreInit = TRUE)
+  
+  workout_results_server(input, output, session, workout_data)
   
   shiny::observeEvent(input$warmup_done, {
     shiny::removeUI(

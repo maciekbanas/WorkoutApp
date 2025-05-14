@@ -7,10 +7,7 @@ workout_configure_tab <-
       shinyMobile::f7Picker(
         inputId = "workout_type",
         label = "Choose your workout",
-        choices = c("Push ups", "Pike push ups", "Advanced pike push ups",
-                    "Dips",
-                    "Pull ups", "High pull ups", "Muscle ups",
-                    "Squats", "Burpees")
+        choices = workout_types
       ),
       shinyMobile::f7Slider(
         inputId = "additional_weight",

@@ -9,7 +9,9 @@ workout_server <- function(input, output, session) {
     workout_data$type <- input$workout_type
     workout_data$reps <- c()
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutSeries")
-    session$sendCustomMessage("updateHeader", "Warm up!")
+    session$sendCustomMessage("updateSeriesNumber", 1L)
+    session$sendCustomMessage("updateHeader", workout_data$type)
+    session$sendCustomMessage("updateSeriesData", input$additional_weight)
   }, ignoreInit = TRUE)
   
   shiny::observeEvent(input$next_series_btn, {
@@ -55,20 +57,23 @@ workout_server <- function(input, output, session) {
   
   workout_results_server(input, output, session, workout_data)
   
-  shiny::observeEvent(input$warmup_done, {
+  shiny::observeEvent(input$series_done, {
     shiny::removeUI(
-      selector = "#warmup_done"
+      selector = "#series_done"
     )
-    session$sendCustomMessage("updateHeader", workout_data$type)
-    session$sendCustomMessage("updateSeriesNumber", 1L)
-    session$sendCustomMessage("updateSeriesData", input$additional_weight)
     insert_series_widgets()
   })
   
   shiny::observeEvent(input$timer_done, {
     if (input$timer_done) {
       session$sendCustomMessage("hideTimer", TRUE)
-      insert_series_widgets()
+      shiny::insertUI(
+        selector = "#series_done_container",
+        ui = shinyMobile::f7Button(
+          "series_done",
+          "Done"
+        )
+      )
     } else {
       shiny::removeUI(
         selector = "#series_widgets"

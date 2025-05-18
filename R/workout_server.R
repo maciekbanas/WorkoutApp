@@ -88,11 +88,16 @@ insert_series_widgets <- function() {
     ui = htmltools::div(
       id = "series_widgets",
       shinyMobile::f7Block(
-        shinyMobile::f7Slider(
+        shinyMobile::f7BlockTitle(
+          "How many reps did you do?"
+        ),
+        shinyMobile::f7Stepper(
           inputId = "reps_input",
-          label = "How many reps did you do?",
+          label = NULL,
           min = 0,
           max = 100,
+          size = "large",
+          manual = TRUE,
           value = 10
         ),
         shiny::br(),

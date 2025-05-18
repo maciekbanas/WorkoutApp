@@ -18,9 +18,12 @@ workout_series_tab <- shinyMobile::f7Tab(
           )
         ),
         shiny::br(),
-        shinyMobile::f7Button(
-          "warmup_done",
-          "Done"
+        htmltools::div(
+          id = "series_done_container",
+          shinyMobile::f7Button(
+            "series_done",
+            "Done"
+          )
         ),
         shiny::uiOutput("series_widgets_container")
       )

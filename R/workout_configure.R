@@ -9,12 +9,17 @@ workout_configure_tab <-
         label = "Choose your workout",
         choices = workout_types
       ),
-      shinyMobile::f7Slider(
+      shinyMobile::f7BlockTitle(
+        "Additional weight?"
+      ),
+      shinyMobile::f7Stepper(
         inputId = "additional_weight",
-        label = "Additional weight?",
+        label = NULL,
         min = 0,
         max = 100,
-        value = 0
+        value = 0,
+        size = "large",
+        manual = TRUE
       ),
       shinyMobile::f7Picker(
         inputId = "resistance_band",
@@ -22,12 +27,18 @@ workout_configure_tab <-
         choices = c("no", "light", "medium", "hard")
       ),
       shiny::br(),
-      shinyMobile::f7Slider(
+      shinyMobile::f7BlockTitle(
+        "Set time between series (seconds)"
+      ),
+      shinyMobile::f7Stepper(
         inputId = "timer_setter",
-        label = "Set timer between series (seconds)",
+        label = NULL,
         min = 0,
-        max = 360,
-        value = 60L
+        max = 1000,
+        step = 15,
+        value = 90,
+        size = "large",
+        manual = TRUE
       ),
       shiny::br(),
       shinyMobile::f7Button(

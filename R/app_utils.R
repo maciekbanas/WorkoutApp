@@ -8,7 +8,11 @@ supabase_project_url <- if (test_mode) {
   Sys.getenv("SUPABASE_PROJECT_URL")
 }
 
-workout_types <- c("Push ups", "Pike push ups", "Advanced pike push ups",
-                   "Dips",
-                   "Pull ups", "High pull ups", "Muscle ups",
-                   "Squats", "Burpees")
+workout_types <- c("push ups", 
+                   "pike push ups", "advanced pike push ups",
+                   "dips", "ring dips",
+                   "chin ups", "weighted chin ups",
+                   "pull ups", "weighted pull ups", "wide pull ups", "archer pull ups", 
+                   "high pull ups", "muscle ups",
+                   "squats", "pistol squats", 
+                   "burpees")

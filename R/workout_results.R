@@ -8,7 +8,13 @@ workout_results_tab <- shinyMobile::f7Tab(
           label = "Choose your workout",
           choices = workout_types
         ),
-        plotly::plotlyOutput("workout_data")
+        plotly::plotlyOutput("workout_data"),
+        shinyMobile::f7Button(
+          inputId = "close_app_btn",
+          label = "Close App",
+          color = "red",
+          size = "large"
+        )
     )
 )
 
@@ -64,4 +70,7 @@ workout_results_server <- function(input, output, session, workout_data) {
       )
   })
   
+  shiny::observeEvent(input$close_app_btn, {
+    shiny::stopApp()
+  })
 }

@@ -52,6 +52,11 @@ workout_server <- function(input, output, session) {
         auto_unbox = TRUE
       )
     )
+    if (test_mode) {
+      shinyMobile::f7Notif(paste0("Workout saved to TEST database."))
+    } else {
+      shinyMobile::f7Notif(paste0("Workout saved to database."))
+    }
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
   }, ignoreInit = TRUE)
   

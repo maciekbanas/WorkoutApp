@@ -3,18 +3,24 @@ workout_results_tab <- shinyMobile::f7Tab(
     icon = shinyMobile::f7Icon("chart_bar_fill"),
     shinyMobile::f7Card(
         shiny::uiOutput("workout_results"),
-        shinyMobile::f7Picker(
-          inputId = "workout_results_type",
-          label = "Choose your workout",
-          choices = workout_types
+        shinyMobile::f7Button(
+          inputId = "next_workout_btn",
+          label = "Next Workout",
+          color = "green",
+          size = "large"
         ),
-        plotly::plotlyOutput("workout_data"),
         shinyMobile::f7Button(
           inputId = "close_app_btn",
           label = "Close App",
           color = "red",
           size = "large"
-        )
+        ),
+        shinyMobile::f7Picker(
+          inputId = "workout_results_type",
+          label = "Display data for",
+          choices = workout_types
+        ),
+        plotly::plotlyOutput("workout_data")
     )
 )
 
@@ -61,13 +67,18 @@ workout_results_server <- function(input, output, session, workout_data) {
       hoverinfo = 'text'
     ) |>
       plotly::layout(
-        title = paste("Workout series for:", input$workout_type),
+        title = paste("Workout series for:", input$workout_results_type),
         xaxis = list(title = "Series"),
         yaxis = list(title = "Repetitions"),
         barmode = 'group',
         paper_bgcolor = 'rgba(0,0,0,0)',
         plot_bgcolor = 'rgba(0,0,0,0)'
       )
+  })
+  
+  shiny::observeEvent(input$"next_workout_btn", {
+    shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutConfigure")
+    session$sendCustomMessage("updateSeriesNumber", 1L)
   })
   
   shiny::observeEvent(input$close_app_btn, {

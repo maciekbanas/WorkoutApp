@@ -1,17 +1,18 @@
 workout_server <- function(input, output, session) {
   workout_data <- shiny::reactiveValues(
     type = "",
-    series_no = 1,
+    series_no = 1L,
     reps = c()
   )
   
   shiny::observeEvent(input$start_workout_btn, {
     workout_data$type <- input$workout_type
     workout_data$reps <- c()
+    workout_data$series_no <- 1L
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutSeries")
-    session$sendCustomMessage("updateSeriesNumber", 1L)
     session$sendCustomMessage("updateHeader", workout_data$type)
     session$sendCustomMessage("updateSeriesData", input$additional_weight)
+    session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
   }, ignoreInit = TRUE)
   
   shiny::observeEvent(input$next_series_btn, {
@@ -52,6 +53,11 @@ workout_server <- function(input, output, session) {
         auto_unbox = TRUE
       )
     )
+    if (test_mode) {
+      shinyMobile::f7Notif(paste0("Workout saved to TEST database."))
+    } else {
+      shinyMobile::f7Notif(paste0("Workout saved to database."))
+    }
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
   }, ignoreInit = TRUE)
   

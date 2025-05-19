@@ -38,8 +38,5 @@ jobs:
 
       - name: Deploy app
         run: |
-          rsconnect::deployApp(
-            appDir = ".",
-            appName = "WorkoutApp"
-          )
+          deploy_workout_app()
         shell: Rscript {0}

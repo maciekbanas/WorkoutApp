@@ -15,9 +15,9 @@ Shiny.addCustomMessageHandler("updateHeader", function(x) {
 })
 
 Shiny.addCustomMessageHandler("updateSeriesNumber", function(x) {
-  $("#series-no").text("Series " + x);
+  $("#series-no").text("series " + x);
 })
 
 Shiny.addCustomMessageHandler("updateSeriesData", function(x) {
-  $("#series-data").text("Additional weight: " + x + " kg");
+  $("#series-data").text("additional weight: " + x + " kg");
 })

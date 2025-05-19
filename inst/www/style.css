@@ -6,3 +6,8 @@
 .hidden {
   visibility: hidden;
 }
+
+.series-headers {
+  font-size: 22px;
+  text-align: center;
+}

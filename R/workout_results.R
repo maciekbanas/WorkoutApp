@@ -3,12 +3,6 @@ workout_results_tab <- shinyMobile::f7Tab(
     icon = shinyMobile::f7Icon("chart_bar_fill"),
     shinyMobile::f7Card(
         shiny::uiOutput("workout_results"),
-        shinyMobile::f7Picker(
-          inputId = "workout_results_type",
-          label = "Choose your workout",
-          choices = workout_types
-        ),
-        plotly::plotlyOutput("workout_data"),
         shinyMobile::f7Button(
           inputId = "next_workout_btn",
           label = "Next Workout",
@@ -20,7 +14,13 @@ workout_results_tab <- shinyMobile::f7Tab(
           label = "Close App",
           color = "red",
           size = "large"
-        )
+        ),
+        shinyMobile::f7Picker(
+          inputId = "workout_results_type",
+          label = "Display data for",
+          choices = workout_types
+        ),
+        plotly::plotlyOutput("workout_data")
     )
 )
 

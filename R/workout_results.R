@@ -78,11 +78,6 @@ workout_results_server <- function(input, output, session, workout_data) {
   
   shiny::observeEvent(input$"next_workout_btn", {
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutConfigure")
-    workout_data <- shiny::reactiveValues(
-      type = "",
-      series_no = 1,
-      reps = c()
-    )
     session$sendCustomMessage("updateSeriesNumber", 1L)
   })
   

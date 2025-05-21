@@ -5,6 +5,13 @@ workout_server <- function(input, output, session) {
     reps = c()
   )
   
+  shiny::observeEvent(c(input$workout_category, input$workout_dynamic), {
+    shinyMobile::updateF7Picker(
+      inputId = "workout_type",
+      choices = workouts[[input$workout_category]][[input$workout_dynamic]]
+    )
+  })
+  
   shiny::observeEvent(input$start_workout_btn, {
     workout_data$type <- input$workout_type
     workout_data$reps <- c()

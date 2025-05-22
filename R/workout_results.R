@@ -59,7 +59,7 @@ workout_results_server <- function(input, output, session, workout_data) {
     
     plotly::plot_ly(
       data = df_long,
-      x = ~timestamp,
+      x = ~lubridate::as_date(timestamp),
       y = ~reps,
       type = 'bar',
       color = ~factor(series),

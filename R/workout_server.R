@@ -55,6 +55,7 @@ workout_server <- function(input, output, session) {
           reps = reps_str,
           weight = input$additional_weight,
           band = input$resistance_band,
+          time_between = input$timer_setter,
           session_date = Sys.time()
         ),
         auto_unbox = TRUE

@@ -29,6 +29,9 @@ workouts <- list(
                  "wall handstand", "handstand (kick)", "handstand (press)",
                  "pseudo-planche-lean", "tucked planche", "straddle planche", "planche"),
     "dynamic" = c("push ups", "pike push ups", "advanced pike push ups",
+                  "weighted push ups", "diamond push ups", "archer push ups",
+                  "one hand push ups",
+                  "ring push ups", "weighted push ups",
                   "dips", "ring dips")
     ),
   "pull" = list(

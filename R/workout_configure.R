@@ -15,10 +15,8 @@ workout_configure_tab <-
         selected = "dynamic",
         choices = c("dynamic", "static")
       ),
-      shinyMobile::f7Picker(
-        inputId = "workout_type",
-        label = "Choose your workout",
-        choices = NULL
+      shiny::div(
+        id = "workout_type_container"
       ),
       shinyMobile::f7BlockTitle(
         "Additional weight?"

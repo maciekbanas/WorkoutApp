@@ -6,9 +6,19 @@ workout_server <- function(input, output, session) {
   )
   
   shiny::observeEvent(c(input$workout_category, input$workout_dynamic), {
-    shinyMobile::updateF7Picker(
-      inputId = "workout_type",
-      choices = workouts[[input$workout_category]][[input$workout_dynamic]]
+    shiny::removeUI(
+      selector = "#workout_type_div"
+    )
+    shiny::insertUI(
+      selector = "#workout_type_container",
+      ui = shiny::div(
+        id = "workout_type_div",
+        shinyMobile::f7Picker(
+          label = "Choose your workout",
+          inputId = "workout_type",
+          choices = workouts[[input$workout_category]][[input$workout_dynamic]]
+        )
+      )
     )
   })
   

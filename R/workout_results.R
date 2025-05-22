@@ -18,7 +18,7 @@ workout_results_tab <- shinyMobile::f7Tab(
         shinyMobile::f7Picker(
           inputId = "workout_results_type",
           label = "Display data for",
-          choices = workout_types
+          choices = purrr::discard(unname(unlist(workouts)), ~ . == "")
         ),
         plotly::plotlyOutput("workout_data")
     )

@@ -1,4 +1,4 @@
-#shiny-timer-container {
+.shinytimer-container {
   display:flex; 
   justify-content:center;
 }

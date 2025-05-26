@@ -9,22 +9,28 @@ workout_series_tab <- shinyMobile::f7Tab(
         shinyMobile::f7Block(
           htmltools::div(
             id = "shiny-timer-container",
-            class = "hidden",
+            class = c("shinytimer-container", "hidden"),
             shinyTimer::shinyTimer(
               inputId = "timer",
               seconds = NULL,
               background = "circle",
-              style = "font-size:46px; background-color:purple;"
+              style = "font-size:46px; background-color:orange;"
+            )
+          ),
+          htmltools::div(
+            id = "stopwatch-container",
+            class = c("shinytimer-container", "hidden"),
+            shinyTimer::shinyTimer(
+              inputId = "stopwatch",
+              seconds = 0,
+              background = "circle",
+              style = "font-size:46px; background-color:green;"
             )
           )
         ),
         shiny::br(),
         htmltools::div(
-          id = "series_done_container",
-          shinyMobile::f7Button(
-            "series_done",
-            "Done"
-          )
+          id = "series_done_container"
         ),
         shiny::uiOutput("series_widgets_container")
       )

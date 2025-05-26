@@ -10,6 +10,14 @@ Shiny.addCustomMessageHandler("hideTimer", function(x) {
   $("#shiny-timer-container").addClass("hidden");
 })
 
+Shiny.addCustomMessageHandler("showStopwatch", function(x) {
+  $("#stopwatch-container").removeClass("hidden");
+})
+
+Shiny.addCustomMessageHandler("hideStopwatch", function(x) {
+  $("#stopwatch-container").addClass("hidden");
+})
+
 Shiny.addCustomMessageHandler("updateHeader", function(x) {
   $("#series-header").text(x);
 })

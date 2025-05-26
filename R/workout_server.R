@@ -30,19 +30,38 @@ workout_server <- function(input, output, session) {
     session$sendCustomMessage("updateHeader", workout_data$type)
     session$sendCustomMessage("updateSeriesData", input$additional_weight)
     session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
+    if (input$workout_dynamic == "dynamic") {
+      shiny::insertUI(
+        selector = "#series_done_container",
+        ui = shinyMobile::f7Button(
+          "series_done",
+          "Done",
+          color = "orange"
+        )
+      )
+    } else {
+      shiny::insertUI(
+        selector = "#series_done_container",
+        ui = shinyMobile::f7Button(
+          "start_static",
+          "Start",
+          color = "green"
+        )
+      )
+    }
   }, ignoreInit = TRUE)
   
   shiny::observeEvent(input$next_series_btn, {
     workout_data$reps <- c(workout_data$reps, input$reps_input)
-    shiny::updateNumericInput(session, "reps_input", value = 10L)
+    shiny::updateNumericInput(session, "reps_input", value = input$reps_input)
+    workout_data$series_no <- workout_data$series_no + 1L
+    session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
     shinyTimer::updateShinyTimer(
       inputId = "timer",
       seconds = input$timer_setter
     )
-    workout_data$series_no <- workout_data$series_no + 1L
     session$sendCustomMessage("resetTimerDone", FALSE)
     session$sendCustomMessage("showTimer", TRUE)
-    session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
     shinyTimer::countDown(
       inputId = "timer"
     )
@@ -71,6 +90,12 @@ workout_server <- function(input, output, session) {
         auto_unbox = TRUE
       )
     )
+    shiny::removeUI(
+      selector = "#series_widgets"
+    )
+    if (input$workout_dynamic == "static") {
+      session$sendCustomMessage("hideStopwatch", TRUE)
+    }
     if (test_mode) {
       shinyMobile::f7Notif(paste0("Workout saved to TEST database."))
     } else {
@@ -81,39 +106,89 @@ workout_server <- function(input, output, session) {
   
   workout_results_server(input, output, session, workout_data)
   
-  shiny::observeEvent(input$series_done, {
-    shiny::removeUI(
-      selector = "#series_done"
-    )
-    insert_series_widgets()
-  })
-  
   shiny::observeEvent(input$timer_done, {
     if (input$timer_done) {
       session$sendCustomMessage("hideTimer", TRUE)
-      shiny::insertUI(
-        selector = "#series_done_container",
-        ui = shinyMobile::f7Button(
-          "series_done",
-          "Done"
+      if (input$workout_dynamic == "dynamic") {
+        shiny::insertUI(
+          selector = "#series_done_container",
+          ui = shinyMobile::f7Button(
+            "series_done",
+            "Done",
+            color = "orange"
+          )
         )
-      )
+      } else {
+        shiny::insertUI(
+          selector = "#series_done_container",
+          ui = shinyMobile::f7Button(
+            "start_static",
+            "Start",
+            color = "green"
+          )
+        )
+      }
     } else {
       shiny::removeUI(
         selector = "#series_widgets"
       )
     }
   })
+  
+  shiny::observeEvent(input$series_done, {
+    shiny::removeUI(
+      selector = "#series_done"
+    )
+    if (input$workout_dynamic == "dynamic") {
+      insert_series_widgets()
+    } else {
+      shinyTimer::pauseTimer(
+        inputId = "stopwatch"
+      )
+      insert_series_widgets("static")
+      session$sendCustomMessage("hideStopwatch", TRUE)
+    }
+  })
+  
+  shiny::observeEvent(input$shinytimer_content, {
+    shinyMobile::updateF7Stepper(
+      inputId = "reps_input",
+      value = as.numeric(input$shinytimer_content)
+    )
+  }, priority = 1)
+  
+  shiny::observeEvent(input$start_static, {
+    shiny::removeUI(
+      selector = "#start_static"
+    )
+    session$sendCustomMessage("showStopwatch", TRUE)
+    shinyTimer::countUp(
+      inputId = "stopwatch"
+    )
+    shiny::insertUI(
+      selector = "#series_done_container",
+      ui = shinyMobile::f7Button(
+        "series_done",
+        "Done",
+        color = "orange"
+      )
+    )
+  })
 }
 
-insert_series_widgets <- function() {
+insert_series_widgets <- function(workout_dynamic = "dynamic") {
+  series_data_title <- if (workout_dynamic == "dynamic") {
+    "How many reps did you do?"
+  } else {
+    "How long did you hold?"
+  }
   shiny::insertUI(
     selector = "#series_widgets_container",
     ui = htmltools::div(
       id = "series_widgets",
       shinyMobile::f7Block(
         shinyMobile::f7BlockTitle(
-          "How many reps did you do?"
+          series_data_title
         ),
         shinyMobile::f7Stepper(
           inputId = "reps_input",

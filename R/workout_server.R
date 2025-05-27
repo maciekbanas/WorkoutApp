@@ -22,6 +22,32 @@ workout_server <- function(input, output, session) {
     )
   })
   
+  shiny::observeEvent(input$workout_type, {
+    shiny::removeUI(
+      selector = "#additional_weight_div"
+    )
+    if (grepl("weighted", input$workout_type)) {
+      shiny::insertUI(
+        selector = "#add_weight_container",
+        ui = shiny::div(
+          id = "additional_weight_div",
+          shinyMobile::f7BlockTitle(
+            "Additional weight?"
+          ),
+          shinyMobile::f7Stepper(
+            inputId = "additional_weight",
+            label = NULL,
+            min = 0,
+            max = 100,
+            value = 0,
+            size = "large",
+            manual = TRUE
+          )
+        )
+      )
+    }
+  })
+  
   shiny::observeEvent(input$start_workout_btn, {
     workout_data$type <- input$workout_type
     workout_data$reps <- c()

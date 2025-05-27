@@ -1,4 +1,4 @@
-#shiny-timer-container {
+.shinytimer-container {
   display:flex; 
   justify-content:center;
 }
@@ -10,4 +10,8 @@
 .series-headers {
   font-size: 22px;
   text-align: center;
+}
+
+#workout_results {
+  font-size: 20px;
 }

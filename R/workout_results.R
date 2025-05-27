@@ -1,3 +1,14 @@
+workout_results_global <- httr::GET(
+  url = supabase_project_url,
+  httr::add_headers(
+    Authorization = paste0("Bearer ", Sys.getenv("SUPABASE_API_KEY")),
+    apikey = Sys.getenv("SUPABASE_ROLE_KEY")
+  )
+) |>
+  httr::content() |>
+  purrr::map(data.frame) |>
+  purrr::list_rbind()
+
 workout_results_tab <- shinyMobile::f7Tab(
     tabName = "WorkoutResults",
     icon = shinyMobile::f7Icon("chart_bar_fill"),
@@ -14,28 +25,23 @@ workout_results_tab <- shinyMobile::f7Tab(
           label = "Close App",
           color = "red",
           size = "large"
-        ),
-        shinyMobile::f7Picker(
+        )
+    ),
+    shinyMobile::f7Card(
+      shiny::div(
+        shinyMobile::f7Select(
           inputId = "workout_results_type",
           label = "Display data for",
-          choices = workout_types
-        ),
-        plotly::plotlyOutput("workout_data")
+          choices = unique(workout_results_global$workout_type),
+          selected = "weighted pull ups"
+        )
+      ),
+      shiny::uiOutput("workout_results_weight_container"),
+      plotly::plotlyOutput("workout_data")
     )
 )
 
 workout_results_server <- function(input, output, session, workout_data) {
-  
-  workout_results_global <- httr::GET(
-    url = supabase_project_url,
-    httr::add_headers(
-      Authorization = paste0("Bearer ", Sys.getenv("SUPABASE_API_KEY")),
-      apikey = Sys.getenv("SUPABASE_ROLE_KEY")
-    )
-  ) |>
-    httr::content() |>
-    purrr::map(data.frame) |>
-    purrr::list_rbind()
   
   output$workout_results <- shiny::renderUI({
     shiny::p(
@@ -44,9 +50,35 @@ workout_results_server <- function(input, output, session, workout_data) {
     )
   })
   
+  filtered_data <- eventReactive(input$workout_results_type, {
+    workout_results_global |>
+      dplyr::filter(workout_type == input$workout_results_type)
+  })
+  
+  shiny::observeEvent(input$workout_results_type, {
+    shiny::removeUI(
+      selector = "#workout_results_weight_div"
+    )
+    shiny::insertUI(
+      selector = "#workout_results_weight_container",
+      ui = shiny::div(
+        id = "workout_results_weight_div",
+        shinyMobile::f7Select(
+          inputId = "workout_results_weight",
+          label = "Weight",
+          choices = unique(filtered_data()$weight)
+        )
+      )
+    )
+  })
+  
+  filtered_data_weight <- eventReactive(c(filtered_data(), input$workout_results_weight), {
+    filtered_data() |>
+      dplyr::filter(weight == input$workout_results_weight)
+  })
+  
   output$workout_data <- plotly::renderPlotly({
-    df_long <- workout_results_global |>
-      dplyr::filter(workout_type == input$workout_results_type) |>
+    df_long <- filtered_data_weight() |>
       dplyr::mutate(series_id = dplyr::row_number()) |>
       tidyr::separate_rows(reps, sep = ",") |>
       dplyr::group_by(id) |>
@@ -59,7 +91,7 @@ workout_results_server <- function(input, output, session, workout_data) {
     
     plotly::plot_ly(
       data = df_long,
-      x = ~timestamp,
+      x = ~lubridate::as_date(timestamp),
       y = ~reps,
       type = 'bar',
       color = ~factor(series),

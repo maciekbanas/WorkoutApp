@@ -32,7 +32,6 @@ workout_configure_tab <-
           choices = c("no", "light", "medium", "hard")
         )
       ),
-      shiny::br(),
       shinyMobile::f7BlockTitle(
         "Set time between series (seconds)"
       ),

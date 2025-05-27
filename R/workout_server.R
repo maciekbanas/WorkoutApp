@@ -120,7 +120,7 @@ workout_server <- function(input, output, session) {
       selector = "#series_widgets"
     )
     if (input$workout_dynamic == "static") {
-      session$sendCustomMessage("hideStopwatch", TRUE)
+      session$sendCustomMessage("hideTimer", TRUE)
     }
     if (test_mode) {
       shinyMobile::f7Notif(paste0("Workout saved to TEST database."))
@@ -169,10 +169,10 @@ workout_server <- function(input, output, session) {
       insert_series_widgets()
     } else {
       shinyTimer::pauseTimer(
-        inputId = "stopwatch"
+        inputId = "timer"
       )
       insert_series_widgets("static")
-      session$sendCustomMessage("hideStopwatch", TRUE)
+      session$sendCustomMessage("hideTimer", TRUE)
     }
   })
   
@@ -187,9 +187,13 @@ workout_server <- function(input, output, session) {
     shiny::removeUI(
       selector = "#start_static"
     )
-    session$sendCustomMessage("showStopwatch", TRUE)
+    session$sendCustomMessage("showTimer", TRUE)
+    shinyTimer::updateShinyTimer(
+      inputId = "timer",
+      seconds = 0L
+    )
     shinyTimer::countUp(
-      inputId = "stopwatch"
+      inputId = "timer"
     )
     shiny::insertUI(
       selector = "#series_done_container",

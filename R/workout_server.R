@@ -97,6 +97,10 @@ workout_server <- function(input, output, session) {
     workout_data$reps <- c(workout_data$reps, input$reps_input)
     
     reps_str <- paste(workout_data$reps, collapse = ",")
+    add_weight <- 0
+    if (!is.null(input$additional_weight)) {
+      add_weight <- input$additional_weight
+    }
     res <- httr::POST(
       url = supabase_project_url,
       httr::add_headers(
@@ -108,7 +112,7 @@ workout_server <- function(input, output, session) {
         list(
           workout_type = workout_data$type,
           reps = reps_str,
-          weight = input$additional_weight,
+          weight = add_weight,
           band = input$resistance_band,
           time_between = input$timer_setter,
           session_date = Sys.time()

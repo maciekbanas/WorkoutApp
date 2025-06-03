@@ -4,29 +4,34 @@ workout_configure_tab <-
     icon = shinyMobile::f7Icon("slider_horizontal_3"),
     active = TRUE,
     shinyMobile::f7Card(
-      shinyMobile::f7Picker(
-        inputId = "workout_type",
-        label = "Choose your workout",
-        choices = workout_types
+      shiny::div(
+        shinyMobile::f7Picker(
+          inputId = "workout_category",
+          label = "Type of workout",
+          choices = workout_types
+        )
       ),
-      shinyMobile::f7BlockTitle(
-        "Additional weight?"
+      shiny::div(
+        shinyMobile::f7Picker(
+          inputId = "workout_dynamic",
+          label = "Dynamic or static",
+          value = "dynamic",
+          choices = c("dynamic", "static")
+        )
       ),
-      shinyMobile::f7Stepper(
-        inputId = "additional_weight",
-        label = NULL,
-        min = 0,
-        max = 100,
-        value = 0,
-        size = "large",
-        manual = TRUE
+      shiny::div(
+        id = "workout_type_container"
       ),
-      shinyMobile::f7Picker(
-        inputId = "resistance_band",
-        label = "Using resistance band",
-        choices = c("no", "light", "medium", "hard")
+      shiny::div(
+        id = "add_weight_container"
       ),
-      shiny::br(),
+      shiny::div(
+        shinyMobile::f7Picker(
+          inputId = "resistance_band",
+          label = "Using resistance band",
+          choices = c("no", "light", "medium", "hard")
+        )
+      ),
       shinyMobile::f7BlockTitle(
         "Set time between series (seconds)"
       ),

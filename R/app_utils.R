@@ -21,12 +21,29 @@ deploy_workout_app <- function(){
   rsconnect::deployApp()
 }
 
-workout_types <- c("push ups", 
-                   "pike push ups", "advanced pike push ups",
-                   "dips", "ring dips",
-                   "chin ups", "weighted chin ups",
-                   "pull ups", "weighted pull ups", "wide pull ups", "archer pull ups", 
-                   "high pull ups", "muscle ups",
-                   "squats", "pistol squats", 
-                   "burpees",
-                   "leg raises")
+workout_types <- c("pull", "push", "core", "legs", "mix")
+
+workouts <- list(
+  "push" = list(
+    "static" = c("frog stand", "crow pose", "advanced crow pose", 
+                 "wall handstand", "handstand (kick)", "handstand (press)",
+                 "pseudo-planche-lean", "tucked planche", "straddle planche", "planche"),
+    "dynamic" = c("push ups", "pike push ups", "advanced pike push ups",
+                  "weighted push ups", "diamond push ups", "archer push ups",
+                  "one hand push ups",
+                  "ring push ups", "weighted push ups",
+                  "dips", "ring dips")
+    ),
+  "pull" = list(
+    "static" = c(""),
+    "dynamic" = c("chin ups", "weighted chin ups", "pull ups", "weighted pull ups",
+                  "wide pull ups", "archer pull ups", 
+                  "high pull ups", "muscle ups (kick)", "muscle up (strict)")
+    ),
+  "legs" = list("dynamic" = c("squats", "weighted squats", "pistol squats"),
+                "static" = c("")),
+  "core" = list(
+    "static" = c("L-sit (hang)", "L-sit (paralletes)", "L-sit (floor)"),
+    "dynamic" = c("leg raises")
+  )
+)

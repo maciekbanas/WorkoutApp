@@ -94,6 +94,22 @@ workout_server <- function(input, output, session) {
   }, ignoreInit = TRUE)
   
   shiny::observeEvent(input$finish_workout_btn, {
+    shinyMobile::f7Dialog(
+      id = "comment_after",
+      title = "Do you want to add some comment?",
+      type = "prompt",
+      text = ""
+    )
+    shiny::removeUI(
+      selector = "#series_widgets"
+    )
+    if (input$workout_dynamic == "static") {
+      session$sendCustomMessage("hideTimer", TRUE)
+    }
+    shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
+  }, ignoreInit = TRUE)
+  
+  shiny::observeEvent(input$comment_after, {
     workout_data$reps <- c(workout_data$reps, input$reps_input)
     
     reps_str <- paste(workout_data$reps, collapse = ",")
@@ -115,24 +131,20 @@ workout_server <- function(input, output, session) {
           weight = add_weight,
           band = input$resistance_band,
           time_between = input$timer_setter,
-          session_date = Sys.time()
+          session_date = Sys.time(),
+          body_weight = input$body_weight,
+          comment_before = input$comment_before,
+          comment_after = input$comment_after
         ),
         auto_unbox = TRUE
       )
     )
-    shiny::removeUI(
-      selector = "#series_widgets"
-    )
-    if (input$workout_dynamic == "static") {
-      session$sendCustomMessage("hideTimer", TRUE)
-    }
     if (test_mode) {
       shinyMobile::f7Notif(paste0("Workout saved to TEST database."))
     } else {
       shinyMobile::f7Notif(paste0("Workout saved to database."))
     }
-    shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
-  }, ignoreInit = TRUE)
+  })
   
   workout_results_server(input, output, session, workout_data)
   

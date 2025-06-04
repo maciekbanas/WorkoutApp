@@ -46,6 +46,27 @@ workout_configure_tab <-
         manual = TRUE
       ),
       shiny::br(),
+      shiny::div(
+        id = "comment_before_container",
+        shinyMobile::f7TextArea(
+          inputId = "comment_before",
+          label = "Do you want to add some comment before workout?"
+        )
+      ),
+      shinyMobile::f7BlockTitle(
+        "Your bodyweight"
+      ),
+      shinyMobile::f7Stepper(
+        inputId = "body_weight",
+        label = NULL,
+        min = 0,
+        max = 200,
+        step = 0.1,
+        value = 73.5,
+        size = "large",
+        manual = TRUE
+      ),
+      shiny::br(),
       shinyMobile::f7Button(
         inputId = "start_workout_btn",
         label = "Start Workout",

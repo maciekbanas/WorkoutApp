@@ -18,6 +18,10 @@ Shiny.addCustomMessageHandler("updateSeriesNumber", function(x) {
   $("#series-no").text("series " + x);
 })
 
-Shiny.addCustomMessageHandler("updateSeriesData", function(x) {
+Shiny.addCustomMessageHandler("updateWeightData", function(x) {
   $("#series-data").text("additional weight: " + x + " kg");
+})
+
+Shiny.addCustomMessageHandler("updateBandInfo", function(x) {
+  $("#series-data").text("resistance band: " + x);
 })

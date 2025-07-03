@@ -26,11 +26,7 @@ workout_configure_tab <-
         id = "add_weight_container"
       ),
       shiny::div(
-        shinyMobile::f7Picker(
-          inputId = "resistance_band",
-          label = "Using resistance band",
-          choices = c("no", "light", "medium", "hard")
-        )
+        id = "add_resistance_band_container"
       ),
       shinyMobile::f7BlockTitle(
         "Set time between series (seconds)"
@@ -42,6 +38,27 @@ workout_configure_tab <-
         max = 1000,
         step = 15,
         value = 90,
+        size = "large",
+        manual = TRUE
+      ),
+      shiny::br(),
+      shiny::div(
+        id = "comment_before_container",
+        shinyMobile::f7TextArea(
+          inputId = "comment_before",
+          label = "Do you want to add some comment before workout?"
+        )
+      ),
+      shinyMobile::f7BlockTitle(
+        "Your bodyweight"
+      ),
+      shinyMobile::f7Stepper(
+        inputId = "body_weight",
+        label = NULL,
+        min = 0,
+        max = 200,
+        step = 0.1,
+        value = 73.5,
         size = "large",
         manual = TRUE
       ),

@@ -73,6 +73,7 @@ workout_results_server <- function(input, output, session, workout_data) {
   })
   
   filtered_data_weight <- eventReactive(c(filtered_data(), input$workout_results_weight), {
+    shiny::req(!is.null(input$workout_results_weight))
     filtered_data() |>
       dplyr::filter(weight == input$workout_results_weight)
   })

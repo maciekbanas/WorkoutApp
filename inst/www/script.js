@@ -25,3 +25,7 @@ Shiny.addCustomMessageHandler("updateWeightData", function(x) {
 Shiny.addCustomMessageHandler("updateBandInfo", function(x) {
   $("#series-data").text("resistance band: " + x);
 })
+
+Shiny.addCustomMessageHandler("showPrepareYourself", function(x) {
+  $("#series-data").text("Prepare yourself!");
+})

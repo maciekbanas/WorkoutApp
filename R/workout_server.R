@@ -170,8 +170,8 @@ workout_server <- function(input, output, session) {
   
   shiny::observeEvent(input$timer_done, {
     if (input$timer_done) {
-      session$sendCustomMessage("hideTimer", TRUE)
       if (input$workout_dynamic == "dynamic") {
+        session$sendCustomMessage("hideTimer", TRUE)
         shiny::insertUI(
           selector = "#series_done_container",
           ui = shinyMobile::f7Button(
@@ -181,12 +181,19 @@ workout_server <- function(input, output, session) {
           )
         )
       } else {
+        shinyTimer::updateShinyTimer(
+          inputId = "timer",
+          seconds = 0L
+        )
+        shinyTimer::countUp(
+          inputId = "timer"
+        )
         shiny::insertUI(
           selector = "#series_done_container",
           ui = shinyMobile::f7Button(
-            "start_static",
-            "Start",
-            color = "green"
+            "series_done",
+            "Done",
+            color = "orange"
           )
         )
       }
@@ -224,20 +231,13 @@ workout_server <- function(input, output, session) {
       selector = "#start_static"
     )
     session$sendCustomMessage("showTimer", TRUE)
+    session$sendCustomMessage("showPrepareYourself", TRUE)
     shinyTimer::updateShinyTimer(
       inputId = "timer",
-      seconds = 0L
+      seconds = 5L
     )
-    shinyTimer::countUp(
+    shinyTimer::countDown(
       inputId = "timer"
-    )
-    shiny::insertUI(
-      selector = "#series_done_container",
-      ui = shinyMobile::f7Button(
-        "series_done",
-        "Done",
-        color = "orange"
-      )
     )
   })
 }

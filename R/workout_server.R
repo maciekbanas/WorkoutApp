@@ -26,6 +26,9 @@ workout_server <- function(input, output, session) {
     shiny::removeUI(
       selector = "#additional_weight_div"
     )
+    shiny::removeUI(
+      selector = "#resistance_band_div"
+    )
     if (grepl("weighted", input$workout_type)) {
       shiny::insertUI(
         selector = "#add_weight_container",
@@ -45,6 +48,18 @@ workout_server <- function(input, output, session) {
           )
         )
       )
+    } else {
+      shiny::insertUI(
+        selector = "#add_resistance_band_container",
+        ui =  shiny::div(
+          id = "resistance_band_div",
+          shinyMobile::f7Picker(
+            inputId = "resistance_band",
+            label = "Using resistance band",
+            choices = c("no", "light", "medium", "hard")
+          )
+        ),
+      )
     }
   })
   
@@ -54,7 +69,12 @@ workout_server <- function(input, output, session) {
     workout_data$series_no <- 1L
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutSeries")
     session$sendCustomMessage("updateHeader", workout_data$type)
-    session$sendCustomMessage("updateSeriesData", input$additional_weight)
+    if (!is.null(input$additional_weight) && input$additional_weight > 0) {
+      session$sendCustomMessage("updateWeightData", input$additional_weight)
+    }
+    if (input$resistance_band != "no") {
+      session$sendCustomMessage("updateBandInfo", input$resistance_band)
+    }
     session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
     if (input$workout_dynamic == "dynamic") {
       shiny::insertUI(

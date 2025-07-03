@@ -26,11 +26,7 @@ workout_configure_tab <-
         id = "add_weight_container"
       ),
       shiny::div(
-        shinyMobile::f7Picker(
-          inputId = "resistance_band",
-          label = "Using resistance band",
-          choices = c("no", "light", "medium", "hard")
-        )
+        id = "add_resistance_band_container"
       ),
       shinyMobile::f7BlockTitle(
         "Set time between series (seconds)"

@@ -6,7 +6,10 @@ workout_app <- function() {
                               script = "script.js",
                               stylesheet = "style.css"
     ),
+    add_pwa_deps(),
+    add_pwacompat_deps(),
     title = "Workout App",
+    allowPWA = TRUE,
     shinyMobile::f7TabLayout(
       navbar = shinyMobile::f7Navbar(
         title = "Workout App"

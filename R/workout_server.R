@@ -1,4 +1,7 @@
 workout_server <- function(input, output, session) {
+  
+  saved_reps_input <- shiny::reactiveVal(10L)
+  
   workout_data <- shiny::reactiveValues(
     type = "",
     series_no = 1L,
@@ -99,6 +102,7 @@ workout_server <- function(input, output, session) {
   
   shiny::observeEvent(input$next_series_btn, {
     workout_data$reps <- c(workout_data$reps, input$reps_input)
+    saved_reps_input(input$reps_input)
     shiny::updateNumericInput(session, "reps_input", value = input$reps_input)
     workout_data$series_no <- workout_data$series_no + 1L
     session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
@@ -209,12 +213,12 @@ workout_server <- function(input, output, session) {
       selector = "#series_done"
     )
     if (input$workout_dynamic == "dynamic") {
-      insert_series_widgets()
+      insert_series_widgets(saved_reps_input)
     } else {
       shinyTimer::pauseTimer(
         inputId = "timer"
       )
-      insert_series_widgets("static")
+      insert_series_widgets(saved_reps_input, "static")
       session$sendCustomMessage("hideTimer", TRUE)
     }
   })
@@ -242,7 +246,7 @@ workout_server <- function(input, output, session) {
   })
 }
 
-insert_series_widgets <- function(workout_dynamic = "dynamic") {
+insert_series_widgets <- function(saved_reps_input, workout_dynamic = "dynamic") {
   series_data_title <- if (workout_dynamic == "dynamic") {
     "How many reps did you do?"
   } else {
@@ -263,7 +267,7 @@ insert_series_widgets <- function(workout_dynamic = "dynamic") {
           max = 100,
           size = "large",
           manual = TRUE,
-          value = 10
+          value = saved_reps_input()
         ),
         shiny::br(),
         shinyMobile::f7Button(

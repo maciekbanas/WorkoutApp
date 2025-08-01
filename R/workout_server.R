@@ -1,7 +1,8 @@
 workout_server <- function(input, output, session) {
   
   saved_reps_input <- shiny::reactiveVal(10L)
-  
+  get_ready_set_off <- shiny::reactiveVal(FALSE)
+    
   workout_data <- shiny::reactiveValues(
     type = "",
     series_no = 1L,
@@ -80,23 +81,10 @@ workout_server <- function(input, output, session) {
     }
     session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
     if (input$workout_dynamic == "dynamic") {
-      shiny::insertUI(
-        selector = "#series_done_container",
-        ui = shinyMobile::f7Button(
-          "series_done",
-          "Done",
-          color = "orange"
-        )
-      )
-    } else {
-      shiny::insertUI(
-        selector = "#series_done_container",
-        ui = shinyMobile::f7Button(
-          "start_static",
-          "Start",
-          color = "green"
-        )
-      )
+      add_series_done_btn()
+    } 
+    if (input$workout_dynamic == "static") {
+      add_start_static_workout_btn()
     }
   }, ignoreInit = TRUE)
   
@@ -107,13 +95,19 @@ workout_server <- function(input, output, session) {
     workout_data$series_no <- workout_data$series_no + 1L
     session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
     shinyTimer::updateShinyTimer(
-      inputId = "timer",
+      inputId = "break_timer",
       seconds = input$timer_setter
     )
-    session$sendCustomMessage("resetTimerDone", FALSE)
-    session$sendCustomMessage("showTimer", TRUE)
+    shiny::removeUI(
+      selector = "#series_widgets"
+    )
+    session$sendCustomMessage("resetTimerDone", "break_timer")
+    if (input$workout_dynamic == "static") {
+      session$sendCustomMessage("resetTimerDone", "get_ready_timer")
+    }
+    session$sendCustomMessage("showTimer", "break")
     shinyTimer::countDown(
-      inputId = "timer"
+      inputId = "break_timer"
     )
   }, ignoreInit = TRUE)
   
@@ -171,40 +165,25 @@ workout_server <- function(input, output, session) {
   })
   
   workout_results_server(input, output, session, workout_data)
+
+  shiny::observeEvent(input$get_ready_timer_done, {
+    if (input$get_ready_timer_done) {
+      get_ready_set_off(FALSE)
+      session$sendCustomMessage("hideTimer", "get-ready")
+      set_off_stopwatch()
+    }
+  })
   
-  shiny::observeEvent(input$timer_done, {
-    if (input$timer_done) {
+  shiny::observeEvent(input$break_timer_done, {
+    if (input$break_timer_done) {
       if (input$workout_dynamic == "dynamic") {
-        session$sendCustomMessage("hideTimer", TRUE)
-        shiny::insertUI(
-          selector = "#series_done_container",
-          ui = shinyMobile::f7Button(
-            "series_done",
-            "Done",
-            color = "orange"
-          )
-        )
-      } else {
-        shinyTimer::updateShinyTimer(
-          inputId = "timer",
-          seconds = 0L
-        )
-        shinyTimer::countUp(
-          inputId = "timer"
-        )
-        shiny::insertUI(
-          selector = "#series_done_container",
-          ui = shinyMobile::f7Button(
-            "series_done",
-            "Done",
-            color = "orange"
-          )
-        )
+        session$sendCustomMessage("hideTimer", "break")
+        add_series_done_btn()
       }
-    } else {
-      shiny::removeUI(
-        selector = "#series_widgets"
-      )
+      if (input$workout_dynamic == "static") {
+        session$sendCustomMessage("hideTimer", "break")
+        add_start_static_workout_btn()
+      }
     }
   })
   
@@ -214,19 +193,20 @@ workout_server <- function(input, output, session) {
     )
     if (input$workout_dynamic == "dynamic") {
       insert_series_widgets(saved_reps_input)
-    } else {
+    } 
+    if (input$workout_dynamic == "static") {
       shinyTimer::pauseTimer(
-        inputId = "timer"
+        inputId = "stopwatch_timer"
       )
+      session$sendCustomMessage("hideTimer", "stopwatch")
       insert_series_widgets(saved_reps_input, "static")
-      session$sendCustomMessage("hideTimer", TRUE)
     }
   })
   
-  shiny::observeEvent(input$shinytimer_content, {
+  shiny::observeEvent(input$stopwatch_timer_content, {
     shinyMobile::updateF7Stepper(
       inputId = "reps_input",
-      value = as.numeric(input$shinytimer_content)
+      value = as.numeric(input$stopwatch_timer_content)
     )
   }, priority = 1)
   
@@ -234,15 +214,8 @@ workout_server <- function(input, output, session) {
     shiny::removeUI(
       selector = "#start_static"
     )
-    session$sendCustomMessage("showTimer", TRUE)
-    session$sendCustomMessage("showPrepareYourself", TRUE)
-    shinyTimer::updateShinyTimer(
-      inputId = "timer",
-      seconds = 5L
-    )
-    shinyTimer::countDown(
-      inputId = "timer"
-    )
+    set_off_get_ready()
+    get_ready_set_off(TRUE)
   })
 }
 
@@ -283,6 +256,52 @@ insert_series_widgets <- function(saved_reps_input, workout_dynamic = "dynamic")
           size = "large"
         )
       )
+    )
+  )
+}
+
+set_off_get_ready <- function(session = shiny::getDefaultReactiveDomain()) {
+  shinyTimer::updateShinyTimer(
+    inputId = "get_ready_timer",
+    seconds = 5L
+  )
+  session$sendCustomMessage("showPrepareYourself", TRUE)
+  session$sendCustomMessage("showTimer", "get-ready")
+  shinyTimer::countDown(
+    inputId = "get_ready_timer"
+  )
+}
+
+set_off_stopwatch <- function(session = shiny::getDefaultReactiveDomain()) {
+  shinyTimer::updateShinyTimer(
+    inputId = "stopwatch_timer",
+    seconds = 0L
+  )
+  session$sendCustomMessage("showTimer", "stopwatch")
+  shinyTimer::countUp(
+    inputId = "stopwatch_timer"
+  )
+  add_series_done_btn()
+}
+
+add_series_done_btn <- function() {
+  shiny::insertUI(
+    selector = "#series_done_container",
+    ui = shinyMobile::f7Button(
+      "series_done",
+      "Done",
+      color = "orange"
+    )
+  )
+}
+
+add_start_static_workout_btn <- function() {
+  shiny::insertUI(
+    selector = "#series_done_container",
+    ui = shinyMobile::f7Button(
+      "start_static",
+      "Start",
+      color = "green"
     )
   )
 }

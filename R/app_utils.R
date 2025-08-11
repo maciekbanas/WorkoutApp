@@ -35,7 +35,7 @@ workouts <- list(
                   "dips", "ring dips")
     ),
   "pull" = list(
-    "static" = c(""),
+    "static" = c("tucked front lever", "front lever"),
     "dynamic" = c("chin ups", "weighted chin ups", "pull ups", "weighted pull ups",
                   "wide pull ups", "archer pull ups", 
                   "high pull ups", "muscle ups (kick)", "muscle up (strict)")

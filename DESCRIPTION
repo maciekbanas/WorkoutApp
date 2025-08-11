@@ -1,6 +1,6 @@
 Package: WorkoutApp
 Title: Application To Measure Progress In Calisthenics
-Version: 0.0.0.9004
+Version: 0.0.0.9005
 Authors@R: c(
     person("Maciej", "Banas", , "banasmaciek@gmail.com", role = c("aut", "cre"))
   )

@@ -1,13 +1,13 @@
-Shiny.addCustomMessageHandler("resetTimerDone", function(x) {
-  Shiny.setInputValue("timer_done", false);
+Shiny.addCustomMessageHandler("resetTimerDone", function(timerName) {
+  Shiny.setInputValue(timerName + "_done", false);
 })
 
-Shiny.addCustomMessageHandler("showTimer", function(x) {
-  $("#shiny-timer-container").removeClass("hidden");
+Shiny.addCustomMessageHandler("showTimer", function(timerName) {
+  $("#" + timerName + "-timer-container").removeClass("hidden");
 })
 
-Shiny.addCustomMessageHandler("hideTimer", function(x) {
-  $("#shiny-timer-container").addClass("hidden");
+Shiny.addCustomMessageHandler("hideTimer", function(timerName) {
+  $("#" + timerName + "-timer-container").addClass("hidden");
 })
 
 Shiny.addCustomMessageHandler("updateHeader", function(x) {

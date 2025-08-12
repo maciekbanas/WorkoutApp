@@ -1,5 +1,9 @@
 workout_server <- function(input, output, session) {
   
+  workout_home_server(input, output, session)
+  
+  workout_dynamic <- shiny::reactiveVal("dynamic")
+  
   saved_reps_input <- shiny::reactiveVal(10L)
   get_ready_set_off <- shiny::reactiveVal(FALSE)
     
@@ -9,7 +13,7 @@ workout_server <- function(input, output, session) {
     reps = c()
   )
   
-  shiny::observeEvent(c(input$workout_category, input$workout_dynamic), {
+  shiny::observeEvent(c(input$workout_category), {
     shiny::removeUI(
       selector = "#workout_type_div"
     )
@@ -20,7 +24,7 @@ workout_server <- function(input, output, session) {
         shinyMobile::f7Picker(
           label = "Choose your workout",
           inputId = "workout_type",
-          choices = workouts[[input$workout_category]][[input$workout_dynamic]]
+          choices = unname(unlist(workouts[[input$workout_category]]))
         )
       )
     )
@@ -33,6 +37,8 @@ workout_server <- function(input, output, session) {
     shiny::removeUI(
       selector = "#resistance_band_div"
     )
+    workout_dynamic(purrr::keep(workouts[[input$workout_category]], function(workout) {input$workout_type %in% workout}) |>
+      names())
     if (grepl("weighted", input$workout_type)) {
       shiny::insertUI(
         selector = "#add_weight_container",
@@ -60,7 +66,7 @@ workout_server <- function(input, output, session) {
           shinyMobile::f7Picker(
             inputId = "resistance_band",
             label = "Using resistance band",
-            choices = c("no", "light", "medium", "hard")
+            choices = resistance_band_choices
           )
         ),
       )
@@ -80,10 +86,10 @@ workout_server <- function(input, output, session) {
       session$sendCustomMessage("updateBandInfo", input$resistance_band)
     }
     session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
-    if (input$workout_dynamic == "dynamic") {
+    if (workout_dynamic() == "dynamic") {
       add_series_done_btn()
     } 
-    if (input$workout_dynamic == "static") {
+    if (workout_dynamic() == "static") {
       add_start_static_workout_btn()
     }
   }, ignoreInit = TRUE)
@@ -102,7 +108,7 @@ workout_server <- function(input, output, session) {
       selector = "#series_widgets"
     )
     session$sendCustomMessage("resetTimerDone", "break_timer")
-    if (input$workout_dynamic == "static") {
+    if (workout_dynamic() == "static") {
       session$sendCustomMessage("resetTimerDone", "get_ready_timer")
     }
     session$sendCustomMessage("showTimer", "break")
@@ -121,7 +127,7 @@ workout_server <- function(input, output, session) {
     shiny::removeUI(
       selector = "#series_widgets"
     )
-    if (input$workout_dynamic == "static") {
+    if (workout_dynamic() == "static") {
       session$sendCustomMessage("hideTimer", TRUE)
     }
     shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutResults")
@@ -176,11 +182,11 @@ workout_server <- function(input, output, session) {
   
   shiny::observeEvent(input$break_timer_done, {
     if (input$break_timer_done) {
-      if (input$workout_dynamic == "dynamic") {
+      if (workout_dynamic() == "dynamic") {
         session$sendCustomMessage("hideTimer", "break")
         add_series_done_btn()
       }
-      if (input$workout_dynamic == "static") {
+      if (workout_dynamic() == "static") {
         session$sendCustomMessage("hideTimer", "break")
         add_start_static_workout_btn()
       }
@@ -191,10 +197,10 @@ workout_server <- function(input, output, session) {
     shiny::removeUI(
       selector = "#series_done"
     )
-    if (input$workout_dynamic == "dynamic") {
+    if (workout_dynamic() == "dynamic") {
       insert_series_widgets(saved_reps_input)
     } 
-    if (input$workout_dynamic == "static") {
+    if (workout_dynamic() == "static") {
       shinyTimer::pauseTimer(
         inputId = "stopwatch_timer"
       )

@@ -13,6 +13,7 @@ RoxygenNote: 7.2.0
 Collate:
   app_utils.R
   workout_configure.R
+  workout_home.R
   workout_series.R
   workout_results.R
   workout_server.R

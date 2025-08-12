@@ -49,3 +49,88 @@ workout_configure_tab <-
       )
     )
   )
+
+workout_configure_server <- function(input, output, session, workout_dynamic, workout_data) {
+  shiny::observeEvent(c(input$workout_category), {
+    shiny::removeUI(
+      selector = "#workout_type_div"
+    )
+    shiny::insertUI(
+      selector = "#workout_type_container",
+      ui = shiny::div(
+        id = "workout_type_div",
+        shinyMobile::f7Picker(
+          label = "Choose your workout",
+          inputId = "workout_type",
+          choices = unname(unlist(workouts[[input$workout_category]]))
+        )
+      )
+    )
+  })
+  
+  shiny::observeEvent(input$workout_type, {
+    shiny::removeUI(
+      selector = "#additional_weight_div"
+    )
+    shiny::removeUI(
+      selector = "#resistance_band_div"
+    )
+    category_workouts <- workouts[[input$workout_category]]
+    workout_dynamics <- purrr::keep(category_workouts, ~ input$workout_type %in% .) |>
+      names()
+    workout_dynamic(workout_dynamics)
+    if (grepl("weighted", input$workout_type)) {
+      shiny::insertUI(
+        selector = "#add_weight_container",
+        ui = shiny::div(
+          id = "additional_weight_div",
+          shinyMobile::f7BlockTitle(
+            "Additional weight?"
+          ),
+          shinyMobile::f7Stepper(
+            inputId = "additional_weight",
+            label = NULL,
+            min = 0,
+            max = 100,
+            value = 0,
+            size = "large",
+            manual = TRUE
+          )
+        )
+      )
+    } else {
+      shiny::insertUI(
+        selector = "#add_resistance_band_container",
+        ui =  shiny::div(
+          id = "resistance_band_div",
+          shinyMobile::f7Picker(
+            inputId = "resistance_band",
+            label = "Using resistance band",
+            choices = resistance_band_choices
+          )
+        ),
+      )
+    }
+  })
+  
+  shiny::observeEvent(input$start_workout_btn, {
+    workout_data$type <- input$workout_type
+    workout_data$reps <- c()
+    workout_data$series_no <- 1L
+    shinyMobile::updateF7Tabs(session, id = "tabs", selected = "WorkoutSeries")
+    session$sendCustomMessage("updateHeader", workout_data$type)
+    if (!is.null(input$additional_weight) && input$additional_weight > 0) {
+      session$sendCustomMessage("updateWeightData", input$additional_weight)
+    }
+    if (input$resistance_band != "no") {
+      session$sendCustomMessage("updateBandInfo", input$resistance_band)
+    }
+    session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
+    if (workout_dynamic() == "dynamic") {
+      add_series_done_btn()
+    } 
+    if (workout_dynamic() == "static") {
+      add_start_static_workout_btn()
+    }
+  }, ignoreInit = TRUE)
+}

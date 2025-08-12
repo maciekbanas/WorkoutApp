@@ -5,7 +5,7 @@ workout_series_tab <- shinyMobile::f7Tab(
         shiny::div(id = "series-header", class = "series-headers"),
         shiny::div(id = "series-data", class = "series-headers"),
         shiny::div(id = "series-no", class = "series-headers"),
-        shiny::div(style = "height: 100px;"),
+        shiny::div(style = "height: 50px;"),
         shiny::br(),
         htmltools::div(
           style = "height: 150px;",

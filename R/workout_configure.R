@@ -50,7 +50,7 @@ workout_configure_tab <-
     )
   )
 
-workout_configure_server <- function(input, output, session, workout_dynamic, workout_data) {
+workout_configure_server <- function(input, output, session, workout_data) {
   shiny::observeEvent(c(input$workout_category), {
     shiny::removeUI(
       selector = "#workout_type_div"
@@ -78,7 +78,7 @@ workout_configure_server <- function(input, output, session, workout_dynamic, wo
     category_workouts <- workouts[[input$workout_category]]
     workout_dynamics <- purrr::keep(category_workouts, ~ input$workout_type %in% .) |>
       names()
-    workout_dynamic(workout_dynamics)
+    workout_data$dynamic = workout_dynamics
     if (grepl("weighted", input$workout_type)) {
       shiny::insertUI(
         selector = "#add_weight_container",
@@ -126,10 +126,10 @@ workout_configure_server <- function(input, output, session, workout_dynamic, wo
       session$sendCustomMessage("updateBandInfo", input$resistance_band)
     }
     session$sendCustomMessage("updateSeriesNumber", workout_data$series_no)
-    if (workout_dynamic() == "dynamic") {
+    if (workout_data$dynamic == "dynamic") {
       add_series_done_btn()
     } 
-    if (workout_dynamic() == "static") {
+    if (workout_data$dynamic == "static") {
       add_start_static_workout_btn()
     }
   }, ignoreInit = TRUE)

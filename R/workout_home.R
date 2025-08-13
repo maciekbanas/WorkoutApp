@@ -17,6 +17,15 @@ workout_home_tab <- shinyMobile::f7Tab(
       manual = TRUE
     ),
     shiny::br(),
+    shiny::div(
+      id = "comment_before_container",
+      shinyMobile::f7TextArea(
+        inputId = "comment_before",
+        label = "",
+        placeholder = "Add comment on any preconditions today."
+      )
+    ),
+    shiny::br(),
     shinyMobile::f7Button(
       inputId = "configure_workout_btn",
       label = "Configure workout"

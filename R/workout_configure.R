@@ -33,14 +33,6 @@ workout_configure_tab <-
         manual = TRUE
       ),
       shiny::br(),
-      shiny::div(
-        id = "comment_before_container",
-        shinyMobile::f7TextArea(
-          inputId = "comment_before",
-          label = "Do you want to add some comment before workout?"
-        )
-      ),
-      shiny::br(),
       shinyMobile::f7Button(
         inputId = "start_workout_btn",
         label = "Start Workout",

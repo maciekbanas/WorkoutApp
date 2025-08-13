@@ -9,7 +9,7 @@ workout_app <- function() {
     title = "Workout App",
     shinyMobile::f7TabLayout(
       navbar = shinyMobile::f7Navbar(
-        title = paste0("Workout App (", app_version, ") ", print_test_mode())
+        title = paste0("Workout App ", print_test_mode(), " (", app_version, ") ")
       ),
       shinyMobile::f7Tabs(
         id = "tabs",

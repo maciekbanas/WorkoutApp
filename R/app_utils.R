@@ -21,6 +21,17 @@ deploy_workout_app <- function(){
   rsconnect::deployApp()
 }
 
+desc <- read.dcf("DESCRIPTION")
+app_version <- desc[1, "Version"]
+
+print_test_mode <- function() {
+  if (test_mode) {
+    shiny::HTML(
+      "*** TEST mode ***"
+    )
+  }
+}
+
 workout_types <- c("pull", "push", "core", "legs", "mix")
 
 workouts <- list(
@@ -47,3 +58,5 @@ workouts <- list(
     "dynamic" = c("leg raises")
   )
 )
+
+resistance_band_choices <- c("no", "very light (yellow)", "light (red)", "medium (black)", "hard (violet")
